@@ -36,8 +36,8 @@ parser.add_argument('--print-freq', '-p', default=10, type=int,
                     help='print frequency (default: 10)')
 parser.add_argument('--layers', default=28, type=int,
                     help='total number of layers (default: 28)')
-parser.add_argument('--width-factor', default=10, type=int,
-                    help='width factor (default: 10)')
+parser.add_argument('--widen-factor', default=10, type=int,
+                    help='widen factor (default: 10)')
 parser.add_argument('--droprate', default=0, type=float,
                     help='dropout probability (default: 0.0)')
 parser.add_argument('--no-augment', dest='augment', action='store_false',
@@ -90,8 +90,8 @@ def main():
         batch_size=args.batch_size, shuffle=True, **kwargs)
 
     # create model
-    model = wrn.WideResNet(args.layers, args.dataset == 'cifar10' and 10 or 100
-                            , args.width_factor, dropRate=args.droprate)
+    model = wrn.WideResNet(args.layers, args.dataset == 'cifar10' and 10 or 100,
+                            args.widen_factor, dropRate=args.droprate)
 
     # get the number of model parameters
     print('Number of model parameters: {}'.format(
