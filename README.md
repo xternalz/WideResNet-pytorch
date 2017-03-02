@@ -1,5 +1,5 @@
 # Wide Residual Networks (WideResNets) in PyTorch
-WideResNets for CIFAR10/100 implemented in PyTorch. This implementation requires less GPU memory than the Torch's one https://github.com/szagoruyko/wide-residual-networks.
+WideResNets for CIFAR10/100 implemented in PyTorch. This implementation requires less GPU memory than what is required by the official Torch implementation: https://github.com/szagoruyko/wide-residual-networks.
 
 Example:
 ```
