@@ -3,7 +3,7 @@ WideResNets for CIFAR10/100 implemented in PyTorch. This implementation requires
 
 Example:
 ```
-python train.py --dataset cifar100 --depth 40 --width-factor 4
+python train.py --dataset cifar100 --depth 40 --widen-factor 4
 ```
 
 Tested on this [version](https://github.com/pytorch/pytorch/tree/7ad948ffa95af4b19394a182dab477f3de853205) of PyTorch .
