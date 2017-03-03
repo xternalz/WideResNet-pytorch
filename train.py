@@ -30,8 +30,8 @@ parser.add_argument('--lr', '--learning-rate', default=0.1, type=float,
                     help='initial learning rate')
 parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
 parser.add_argument('--nesterov', default=True, type=bool, help='nesterov momentum')
-parser.add_argument('--weight-decay', '--wd', default=1e-4, type=float,
-                    help='weight decay (default: 1e-4)')
+parser.add_argument('--weight-decay', '--wd', default=5e-4, type=float,
+                    help='weight decay (default: 5e-4)')
 parser.add_argument('--print-freq', '-p', default=10, type=int,
                     help='print frequency (default: 10)')
 parser.add_argument('--layers', default=28, type=int,
