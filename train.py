@@ -123,7 +123,7 @@ def main():
                                 weight_decay=args.weight_decay)
 
     for epoch in range(args.start_epoch, args.epochs):
-        adjust_learning_rate(optimizer, epoch)
+        adjust_learning_rate(optimizer, epoch+1)
 
         # train for one epoch
         train(train_loader, model, criterion, optimizer, epoch)
@@ -261,8 +261,8 @@ class AverageMeter(object):
 
 
 def adjust_learning_rate(optimizer, epoch):
-    """Sets the learning rate to the initial LR divided by 5 after 60, 120 and 160 epochs"""
-    lr = args.lr * ((0.2 ** int(epoch > 60)) * (0.2 ** int(epoch > 120))* (0.2 ** int(epoch > 160)))
+    """Sets the learning rate to the initial LR divided by 5 at 60th, 120th and 160th epochs"""
+    lr = args.lr * ((0.2 ** int(epoch >= 60)) * (0.2 ** int(epoch >= 120))* (0.2 ** int(epoch >= 160)))
     # log to TensorBoard
     if args.tensorboard:
         log_value('learning_rate', lr, epoch)
