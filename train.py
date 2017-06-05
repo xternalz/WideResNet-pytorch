@@ -5,14 +5,16 @@ import time
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.nn.parallel
 import torch.backends.cudnn as cudnn
 import torch.optim
 import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
+from torch.autograd import Variable
 
-import wideresnet as wrn
+from wideresnet import WideResNet
 
 # used for logging to TensorBoard
 from tensorboard_logger import configure, log_value
@@ -63,7 +65,12 @@ def main():
 
     if args.augment:
         transform_train = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
+        	transforms.ToTensor(),
+        	transforms.Lambda(lambda x: F.pad(
+        						Variable(x.unsqueeze(0), requires_grad=False, volatile=True),
+        						(4,4,4,4),mode='reflect').data.squeeze()),
+            transforms.ToPILImage(),
+            transforms.RandomCrop(32),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             normalize,
@@ -89,7 +96,7 @@ def main():
         batch_size=args.batch_size, shuffle=True, **kwargs)
 
     # create model
-    model = wrn.WideResNet(args.layers, args.dataset == 'cifar10' and 10 or 100,
+    model = WideResNet(args.layers, args.dataset == 'cifar10' and 10 or 100,
                             args.widen_factor, dropRate=args.droprate)
 
     # get the number of model parameters
@@ -116,7 +123,7 @@ def main():
 
     cudnn.benchmark = True
 
-    # define loss function (criterion) and pptimizer
+    # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().cuda()
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum, nesterov = args.nesterov,

@@ -24,11 +24,11 @@ class BasicBlock(nn.Module):
             x = self.relu1(self.bn1(x))
         else:
             out = self.relu1(self.bn1(x))
-        out = self.relu2(self.bn2(self.conv1(self.equalInOut and out or x)))
+        out = self.relu2(self.bn2(self.conv1(out if self.equalInOut else x)))
         if self.droprate > 0:
             out = F.dropout(out, p=self.droprate, training=self.training)
         out = self.conv2(out)
-        return torch.add((not self.equalInOut) and self.convShortcut(x) or x, out)
+        return torch.add(x if self.equalInOut else self.convShortcut(x), out)
 
 class NetworkBlock(nn.Module):
     def __init__(self, nb_layers, in_planes, out_planes, block, stride, dropRate=0.0):
