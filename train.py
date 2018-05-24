@@ -66,9 +66,8 @@ def main():
     if args.augment:
         transform_train = transforms.Compose([
         	transforms.ToTensor(),
-        	transforms.Lambda(lambda x: F.pad(
-        						Variable(x.unsqueeze(0), requires_grad=False, volatile=True),
-        						(4,4,4,4),mode='reflect').data.squeeze()),
+        	transforms.Lambda(lambda x: F.pad(x.unsqueeze(0),
+        						(4,4,4,4),mode='reflect').squeeze()),
             transforms.ToPILImage(),
             transforms.RandomCrop(32),
             transforms.RandomHorizontalFlip(),
@@ -146,7 +145,7 @@ def main():
             'state_dict': model.state_dict(),
             'best_prec1': best_prec1,
         }, is_best)
-    print 'Best accuracy: ', best_prec1
+    print('Best accuracy: ', best_prec1)
 
 def train(train_loader, model, criterion, optimizer, epoch):
     """Train for one epoch on the training set"""
@@ -170,8 +169,8 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
         # measure accuracy and record loss
         prec1 = accuracy(output.data, target, topk=(1,))[0]
-        losses.update(loss.data[0], input.size(0))
-        top1.update(prec1[0], input.size(0))
+        losses.update(loss.data.item(), input.size(0))
+        top1.update(prec1.item(), input.size(0))
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
@@ -207,17 +206,18 @@ def validate(val_loader, model, criterion, epoch):
     for i, (input, target) in enumerate(val_loader):
         target = target.cuda(async=True)
         input = input.cuda()
-        input_var = torch.autograd.Variable(input, volatile=True)
-        target_var = torch.autograd.Variable(target, volatile=True)
+        input_var = torch.autograd.Variable(input)
+        target_var = torch.autograd.Variable(target)
 
         # compute output
-        output = model(input_var)
+        with torch.no_grad():
+            output = model(input_var)
         loss = criterion(output, target_var)
 
         # measure accuracy and record loss
         prec1 = accuracy(output.data, target, topk=(1,))[0]
-        losses.update(loss.data[0], input.size(0))
-        top1.update(prec1[0], input.size(0))
+        losses.update(loss.data.item(), input.size(0))
+        top1.update(prec1.item(), input.size(0))
 
         # measure elapsed time
         batch_time.update(time.time() - end)
